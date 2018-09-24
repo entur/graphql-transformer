@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+  ~ the European Commission - subsequent versions of the EUPL (the "Licence");
+  ~ You may not use this work except in compliance with the Licence.
+  ~ You may obtain a copy of the Licence at:
+  ~
+  ~   https://joinup.ec.europa.eu/software/page/eupl
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the Licence is distributed on an "AS IS" basis,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the Licence for the specific language governing permissions and
+  ~ limitations under the Licence.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
+
+    <groupId>no.entur</groupId>
+    <artifactId>graphql-transformer</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>graphql-transformer</name>
+    <description>Util for manipulating GraphQL requests by setting or manipulating argument values and adding additional
+        fields
+    </description>
+    <url>https://github.com/entur/graphql-transformer</url>
+    <inceptionYear>2016</inceptionYear>
+    <licenses>
+        <license>
+            <name>EUPL-1.2 with modifications</name>
+            <url>https://joinup.ec.europa.eu/software/page/eupl</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:ssh://git@github.com/entur/graphql-transformer.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/entur/graphql-transformer.git</developerConnection>
+        <url>https://github.com/entur/graphql-transformer/tree/master</url>
+    </scm>
+
+    <organization>
+        <name>Entur AS</name>
+        <url>http://www.entur.org/</url>
+    </organization>
+
+    <properties>
+        <license.licenseName>eupl-1.2</license.licenseName>
+        <license.licenseResolver>${project.baseUri}/src/license</license.licenseResolver>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4j.version>1.7.22</slf4j.version>
+        <guava.version>26.0-jre</guava.version>
+        <junit.version>4.12</junit.version>
+        <jackson.version>2.9.6</jackson.version>
+        <graphql.version>9.2</graphql.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java</artifactId>
+            <version>${graphql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <extensions>
+            <!-- maven3 will need wagon-ssh extension in order to be able to release,
+            Using external variant in order to retain keys, etc -->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>2.10</version>
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <encoding>UTF-8</encoding>
+                        <compilerArgs>
+                            <!--arg>-Werror</arg-->
+                            <arg>-Xlint:all</arg>
+                        </compilerArgs>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-compiler-javac</artifactId>
+                            <version>2.7</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <releaseProfiles>release,sign,!noPublicDeploy</releaseProfiles>
+                        <goals>deploy</goals>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.scm</groupId>
+                            <artifactId>maven-scm-provider-gitexe</artifactId>
+                            <version>1.9.2</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

@@ -1,0 +1,38 @@
+{
+  "query": "query tripPatterns($numTripPatterns: Int!, $from: Location!, $to: Location!, $dateTime: DateTime!, $arriveBy: Boolean!, $modes: [Mode]!, $transportSubmodes: [TransportSubmodeFilter]) {\n  trip(numTripPatterns: $numTripPatterns, wheelchair: false, from: $from, to: $to, dateTime: $dateTime, arriveBy: $arriveBy, modes: $modes, transportSubmodes: $transportSubmodes) {\n    tripPatterns {\n      startTime\n      endTime\n      duration\n      distance\n      legs {\n        ...legFields\n      }\n    }\n  }\n}\n\nfragment legFields on Leg {\n  \n  aimedStartTime\n  aimedEndTime\n  expectedStartTime\n  expectedEndTime\n  realtime\n  distance\n  duration\n  toEstimatedCall {\n    notices {\n      text\n    }\n  }\n  fromEstimatedCall {\n    destinationDisplay {\n      frontText\n    }\n    notices {\n      text\n    }\n  }\n  pointsOnLink {\n    points\n    length\n  }\n  fromPlace {\n    ...placeFields\n  }\n  toPlace {\n    ...placeFields\n  }\n  intermediateQuays {\n    id\n    name\n    stopPlace {\n      ...stopPlaceFields\n    }\n  }\n  authority {\n    id\n    name\n    url\n  }\n  operator {\n    id\n    name\n    url\n  }\n  line {\n    publicCode\n    name\n    transportSubmode\n    id\n  }\n  transportSubmode\n  serviceJourney {\n    ...serviceJourneyFields\n  }\n  intermediateEstimatedCalls {\n    ...intermediateEstimatedCallFields\n  }\n  situations {\n    ...situationFields\n  }\n  ride\n}\n\nfragment placeFields on Place {\n  name\n  latitude\n  longitude\n  quay {\n    id\n    name\n    stopPlace {\n      ...stopPlaceFields\n    }\n    publicCode\n  }\n}\n\nfragment serviceJourneyFields on ServiceJourney {\n  id\n  publicCode\n  journeyPattern {\n    line {\n      transportSubmode\n      notices {\n        text\n      }\n    }\n    notices {\n      text\n    }\n  }\n  notices {\n    text\n  }\n}\n\nfragment intermediateEstimatedCallFields on EstimatedCall {\n  quay {\n    id\n    name\n    stopPlace {\n      id\n    }\n  }\n  forAlighting\n  forBoarding\n  aimedDepartureTime\n  expectedDepartureTime\n  actualDepartureTime\n}\n\nfragment stopPlaceFields on StopPlace {\n  id\n  name\n  description\n  tariffZones {\n    id\n  }\n  parent {\n    name\n    id\n  }\n}\n\nfragment situationFields on PtSituationElement {\n  situationNumber\n  summary {\n    value\n  }\n  description {\n    value\n  }\n  detail {\n    value\n  }\n  validityPeriod {\n    startTime\n    endTime\n  }\n  reportType\n  infoLink\n}\n",
+  "variables": {
+    "numTripPatterns": 10,
+    "from": {
+      "name": "Einars vei, Oslo",
+      "place": "NSR:StopPlace:6038",
+      "coordinates": {
+        "latitude": 59.924585,
+        "longitude": 10.787916
+      }
+    },
+    "to": {
+      "name": "Asker stasjon, Asker",
+      "place": "NSR:StopPlace:3247",
+      "coordinates": {
+        "latitude": 59.83331,
+        "longitude": 10.433721
+      }
+    },
+    "dateTime": "2018-09-04T10:02",
+    "arriveBy": false,
+    "modes": [
+      "bus",
+      "tram",
+      "rail",
+      "metro",
+      "water",
+      "air",
+      "coach",
+      "foot",
+      "bicycle",
+      "car"
+    ],
+    "transportSubmodes": []
+  },
+  "operationName": "tripPatterns"
+}

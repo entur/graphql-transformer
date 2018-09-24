@@ -1,0 +1,15 @@
+{
+  "query": "query TripQuery($fromPlaceName: String $to: Location! ) {\n  trip(from: {place: \"NSR:StopPlace:5199\", name:$fromPlaceName, coordinates: {latitude: 3.0, longitude: 1.0}}, to: $to, numTripPatterns: 3, dateTime: \"2017-11-19T23:51:14.000+0100\", arriveBy: false) {\n    tripPatterns {\n      startTime\n      duration\n      walkDistance\n      legs {\n        mode\n        distance\n        line {\n          id\n          publicCode\n        }\n        pointsOnLink {\n          points\n          length\n        }\n      }\n    }\n    messageStrings\n  }\n}\n",
+  "variables": {
+    "fromPlaceName": "Oslo s, Oslo",
+    "to": {
+      "place": "NSR:StopPlace:5094",
+      "name": "Alna, Oslo",
+      "coordinates": {
+        "latitude": 1,
+        "longitude": 1
+      }
+    }
+  },
+  "operationName": "TripQuery"
+}
