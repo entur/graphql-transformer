@@ -45,4 +45,4 @@ Useful in services acting as facades / proxies in front of a graphQL service.
         // Return to string representation
         String transformedPayload = graphQLRequest.toString();
 
-        
+         
