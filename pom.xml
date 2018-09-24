@@ -43,6 +43,15 @@
         <url>https://github.com/entur/graphql-transformer/tree/master</url>
     </scm>
 
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>Nexus</id>
+            <url>https://nexus.rutebanken.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
     <organization>
         <name>Entur AS</name>
         <url>http://www.entur.org/</url>
