@@ -26,11 +26,13 @@ import graphql.language.Document;
 import graphql.language.Field;
 import graphql.language.FragmentDefinition;
 import graphql.language.FragmentSpread;
+import graphql.language.Node;
 import graphql.language.ObjectValue;
 import graphql.language.OperationDefinition;
 import graphql.language.Selection;
 import graphql.language.SelectionSet;
 import graphql.language.Value;
+import graphql.language.VariableDefinition;
 import graphql.language.VariableReference;
 import graphql.parser.Parser;
 import no.entur.graphql.transformer.argument.ArgumentValue;
@@ -41,9 +43,13 @@ import no.entur.graphql.transformer.json.JsonMessageSingle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GraphQLRequest extends JsonMessageSingle {
 
@@ -88,6 +94,7 @@ public class GraphQLRequest extends JsonMessageSingle {
 
     @Override
     public String writeValueAsString() {
+        removeUnusedVariables();
         if (query != null) {
             element.set("query", TextNode.valueOf(graphQLPrinter.print(query)));
         }
@@ -264,6 +271,61 @@ public class GraphQLRequest extends JsonMessageSingle {
         }
     }
 
+    /**
+     * Remove any json elements in the variables object that no longer has references from the query.
+     * <p>
+     * Unused variables may be left after overwriting arguments in the query.
+     */
+    private void removeUnusedVariables() {
+        ObjectNode variables = getVariables();
+        if (query != null && variables.isObject()) {
+
+            List<OperationDefinition> operationDefinitions = query.getDefinitions().stream()
+                                                                     .filter(OperationDefinition.class::isInstance).map(OperationDefinition.class::cast).collect(Collectors.toList());
+
+            List<Node> argumentNodes = operationDefinitions.stream().map(OperationDefinition::getSelectionSet).map(SelectionSet::getSelections).flatMap(List::stream)
+                                               .filter(Field.class::isInstance).map(Field.class::cast).map(Field::getArguments).flatMap(List::stream)
+                                               .map(Argument::getChildren).flatMap(List::stream).collect(Collectors.toList());
+
+            Set<String> variableRefs = collectVariableReferences(argumentNodes);
+
+            // Remove any variable definitions not in set of active variable refs
+            for (OperationDefinition operationDefinition : operationDefinitions) {
+                Iterator<VariableDefinition> variableDefinitionItr = operationDefinition.getVariableDefinitions().iterator();
+                while (variableDefinitionItr.hasNext()) {
+                    VariableDefinition variableDefinition = variableDefinitionItr.next();
+                    if (!variableRefs.contains(variableDefinition.getName())) {
+                        variableDefinitionItr.remove();
+                    }
+                }
+            }
+
+            // Remove any variable values not in set of active variable refs
+            Iterator<String> variableNames = variables.fieldNames();
+            while (variableNames.hasNext()) {
+                String variableName = variableNames.next();
+                if (!variableRefs.contains(variableName)) {
+                    variableNames.remove();
+                }
+            }
+
+
+        }
+
+    }
+
+    private Set<String> collectVariableReferences(Collection<Node> nodes) {
+        Set<String> variableRefs = new HashSet<>();
+        for (Node node : nodes) {
+            if (node instanceof VariableReference) {
+                variableRefs.add(((VariableReference) node).getName());
+            } else {
+                variableRefs.addAll(collectVariableReferences(node.getChildren()));
+            }
+        }
+        return variableRefs;
+    }
+
 
     private ArgumentValue getValue(Value node, String... path) {
         Value current = node;
@@ -275,7 +337,7 @@ public class GraphQLRequest extends JsonMessageSingle {
                 List<String> remainingPath = new ArrayList();
                 remainingPath.add(ref);
                 remainingPath.addAll(Arrays.asList(Arrays.copyOfRange(path, i, path.length)));
-                return getVariableValue(element.get("variables"), remainingPath);
+                return getVariableValue(getVariables(), remainingPath);
             } else if (current instanceof ObjectValue) {
                 ObjectValue objectValue = (ObjectValue) current;
                 if (objectValue.getObjectFields() == null || objectValue.getObjectFields().size() == 0) {
@@ -291,10 +353,18 @@ public class GraphQLRequest extends JsonMessageSingle {
 
         if (current instanceof VariableReference) {
             String ref = ((VariableReference) current).getName();
-            return getVariableValue(element.get("variables"), Arrays.asList(ref));
+            return getVariableValue(getVariables(), Arrays.asList(ref));
         }
 
         return new GraphQLArgumentValue(current);
+    }
+
+    private ObjectNode getVariables() {
+        JsonNode variablesNode = element.get("variables");
+        if (variablesNode.isObject()) {
+            return (ObjectNode) variablesNode;
+        }
+        return null;
     }
 
 

@@ -125,5 +125,16 @@ public class GraphQLRequestTest {
         fragmentReq.writeValueAsString().contains("rentedBike");
     }
 
+    @Test
+    public void testRemoveUnusedVariablesBeforeWritingValueAsString() throws Exception {
+
+        String valueFromReplacedVariable = "$to";
+        Assert.assertTrue("Value should be present before replacement", req.writeValueAsString().contains(valueFromReplacedVariable));
+
+        req.setArgumentValue("trip", "to", new StringValue("replaceToValue"));
+
+        Assert.assertFalse("Value should not be present after replacement", req.writeValueAsString().contains(valueFromReplacedVariable));
+    }
+
 
 }
