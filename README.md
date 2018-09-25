@@ -22,7 +22,7 @@ Useful in services acting as facades / proxies in front of a graphQL service.
         List<String> addedPath = graphQLRequest.addSelectionField("operationName", "parentField1", "parentField2", "newField");
         
         // Convert request to string and send to GraphQL service
-        String responsePayload = client.sendRequest(graphQLRequest.toString());
+        String responsePayload = client.sendRequest(graphQLRequest.writeValueAsString());
         
         // Parse response to JsonNode
         ObjectNode jsonResponse=objectMapper.readValue(responsePayload, ObjectNode.class);
@@ -43,6 +43,6 @@ Useful in services acting as facades / proxies in front of a graphQL service.
         graphQLRequest.setArgumentValue("fieldName", "argumentName", new StringValue("argumentValue"));
 
         // Return to string representation
-        String transformedPayload = graphQLRequest.toString();
+        String transformedPayload = graphQLRequest.writeValueAsString();
 
          
