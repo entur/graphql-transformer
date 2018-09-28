@@ -278,7 +278,7 @@ public class GraphQLRequest extends JsonMessageSingle {
      */
     private void removeUnusedVariables() {
         ObjectNode variables = getVariables();
-        if (query != null && variables.isObject()) {
+        if (query != null && variables != null && variables.isObject()) {
 
             List<OperationDefinition> operationDefinitions = query.getDefinitions().stream()
                                                                      .filter(OperationDefinition.class::isInstance).map(OperationDefinition.class::cast).collect(Collectors.toList());
