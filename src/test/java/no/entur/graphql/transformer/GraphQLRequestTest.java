@@ -136,5 +136,15 @@ public class GraphQLRequestTest {
         Assert.assertFalse("Value should not be present after replacement", req.writeValueAsString().contains(valueFromReplacedVariable));
     }
 
+    @Test
+    public void removeUnusedVariables_whenVariableRefsUsedInSubSelection_doNotRemove() throws Exception {
+        String msg = CharStreams.toString(new FileReader("src/test/resources/no/entur/grapqhl/transformer/request_stop_place.json"));
+        GraphQLRequest stopPlaceReq = new GraphQLRequest(msg, objectMapper);
+
+        String valueFromReplacedVariable = "$range";
+        Assert.assertTrue("Value should be present before replacement",
+                stopPlaceReq.writeValueAsString().contains(valueFromReplacedVariable));
+
+    }
 
 }

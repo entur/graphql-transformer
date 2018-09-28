@@ -281,13 +281,10 @@ public class GraphQLRequest extends JsonMessageSingle {
         if (query != null && variables != null && variables.isObject()) {
 
             List<OperationDefinition> operationDefinitions = query.getDefinitions().stream()
-                                                                     .filter(OperationDefinition.class::isInstance).map(OperationDefinition.class::cast).collect(Collectors.toList());
+                                                                     .filter(OperationDefinition.class::isInstance)
+                                                                     .map(OperationDefinition.class::cast).collect(Collectors.toList());
 
-            List<Node> argumentNodes = operationDefinitions.stream().map(OperationDefinition::getSelectionSet).map(SelectionSet::getSelections).flatMap(List::stream)
-                                               .filter(Field.class::isInstance).map(Field.class::cast).map(Field::getArguments).flatMap(List::stream)
-                                               .map(Argument::getChildren).flatMap(List::stream).collect(Collectors.toList());
-
-            Set<String> variableRefs = collectVariableReferences(argumentNodes);
+            Set<String> variableRefs = collectVariableReferences(operationDefinitions);
 
             // Remove any variable definitions not in set of active variable refs
             for (OperationDefinition operationDefinition : operationDefinitions) {
@@ -314,7 +311,7 @@ public class GraphQLRequest extends JsonMessageSingle {
 
     }
 
-    private Set<String> collectVariableReferences(Collection<Node> nodes) {
+    private Set<String> collectVariableReferences(Collection<? extends Node> nodes) {
         Set<String> variableRefs = new HashSet<>();
         for (Node node : nodes) {
             if (node instanceof VariableReference) {
