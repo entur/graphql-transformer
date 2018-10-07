@@ -316,6 +316,13 @@ public class GraphQLRequest extends JsonMessageSingle {
         for (Node node : nodes) {
             if (node instanceof VariableReference) {
                 variableRefs.add(((VariableReference) node).getName());
+            } else if (node instanceof FragmentSpread) {
+                FragmentSpread fragmentSpread = (FragmentSpread) node;
+
+                FragmentDefinition fragment = getFragmentDefinition(fragmentSpread.getName());
+                if (fragment != null) {
+                    variableRefs.addAll(collectVariableReferences(fragment.getChildren()));
+                }
             } else {
                 variableRefs.addAll(collectVariableReferences(node.getChildren()));
             }

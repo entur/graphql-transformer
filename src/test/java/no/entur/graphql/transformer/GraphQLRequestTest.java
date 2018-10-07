@@ -142,9 +142,21 @@ public class GraphQLRequestTest {
         GraphQLRequest stopPlaceReq = new GraphQLRequest(msg, objectMapper);
 
         String valueFromReplacedVariable = "$range";
-        Assert.assertTrue("Value should be present before replacement",
+        Assert.assertTrue("Value should be present after replacement",
                 stopPlaceReq.writeValueAsString().contains(valueFromReplacedVariable));
-
     }
 
+    @Test
+    public void removeUnusedVariables_whenVariableRefsUsedInFragment_doNotRemove() throws Exception {
+        String msg = CharStreams.toString(new FileReader("src/test/resources/no/entur/grapqhl/transformer/request_with_variablerefs_in_fragment.json"));
+        GraphQLRequest req = new GraphQLRequest(msg, objectMapper);
+
+        String valueFromReplacedVariable = "$startTime";
+
+        String cleanedReqAsString = req.writeValueAsString();
+        Assert.assertTrue("ValVariableRef should be present after replacement",
+                cleanedReqAsString.contains(valueFromReplacedVariable));
+        Assert.assertTrue("Variable should be present after replacement",
+                cleanedReqAsString.contains("\"startTime\":"));
+    }
 }
