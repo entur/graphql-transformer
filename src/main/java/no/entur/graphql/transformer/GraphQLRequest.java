@@ -365,7 +365,7 @@ public class GraphQLRequest extends JsonMessageSingle {
 
     private ObjectNode getVariables() {
         JsonNode variablesNode = element.get("variables");
-        if (variablesNode.isObject()) {
+        if (variablesNode!=null && variablesNode.isObject()) {
             return (ObjectNode) variablesNode;
         }
         return null;
