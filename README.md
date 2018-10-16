@@ -1,4 +1,4 @@
-# graphql-transformer
+# graphql-transformer [![CircleCI](https://circleci.com/gh/entur/graphql-transformer/tree/master.svg?style=svg)](https://circleci.com/gh/entur/graphql-transformer/tree/master)
 
 Java tool to transform GraphQL requests. 
 
