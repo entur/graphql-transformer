@@ -96,9 +96,13 @@ public class GraphQLRequest extends JsonMessageSingle {
     public String writeValueAsString() {
         removeUnusedVariables();
         if (query != null) {
-            element.set("query", TextNode.valueOf(graphQLPrinter.print(query)));
+            element.set("query", TextNode.valueOf(writeQueryAsString()));
         }
         return super.writeValueAsString();
+    }
+
+    public String writeQueryAsString() {
+        return graphQLPrinter.print(query);
     }
 
 
