@@ -208,24 +208,26 @@ public class GraphQLRequest extends JsonMessageSingle {
     }
 
     private Field getField(SelectionSet selectionSet, String fieldName) {
-        for (Selection selection : selectionSet.getSelections()) {
+        if (selectionSet != null) {
+            for (Selection selection : selectionSet.getSelections()) {
 
-            if (selection instanceof Field) {
-                Field field = (Field) selection;
-                if (Objects.equals(fieldName, field.getName())) {
-                    return field;
-                }
-            } else if (selection instanceof FragmentSpread) {
-                FragmentSpread fragmentSpread = (FragmentSpread) selection;
-
-                FragmentDefinition fragment = getFragmentDefinition(fragmentSpread.getName());
-                if (fragment != null) {
-                    Field field = getField(fragment.getSelectionSet(), fieldName);
-                    if (field != null) {
+                if (selection instanceof Field) {
+                    Field field = (Field) selection;
+                    if (Objects.equals(fieldName, field.getName())) {
                         return field;
                     }
-                }
+                } else if (selection instanceof FragmentSpread) {
+                    FragmentSpread fragmentSpread = (FragmentSpread) selection;
 
+                    FragmentDefinition fragment = getFragmentDefinition(fragmentSpread.getName());
+                    if (fragment != null) {
+                        Field field = getField(fragment.getSelectionSet(), fieldName);
+                        if (field != null) {
+                            return field;
+                        }
+                    }
+
+                }
             }
         }
 
@@ -369,7 +371,7 @@ public class GraphQLRequest extends JsonMessageSingle {
 
     private ObjectNode getVariables() {
         JsonNode variablesNode = element.get("variables");
-        if (variablesNode!=null && variablesNode.isObject()) {
+        if (variablesNode != null && variablesNode.isObject()) {
             return (ObjectNode) variablesNode;
         }
         return null;
