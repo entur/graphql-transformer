@@ -24,7 +24,9 @@ import com.google.common.collect.Streams;
 import graphql.language.EnumValue;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JsonNodeArgumentValue implements ArgumentValue {
@@ -85,6 +87,14 @@ public class JsonNodeArgumentValue implements ArgumentValue {
         return null;
     }
 
+    public Map<String, ArgumentValue> asMap() {
+        if (jsonNode != null && jsonNode.isObject()) {
+            Map<String, ArgumentValue> mapNode = new HashMap<>();
+            Streams.stream(jsonNode.fields()).forEach(e -> mapNode.put(e.getKey(), new JsonNodeArgumentValue(e.getValue(), null, null)));
+            return mapNode;
+        }
+        return null;
+    }
 
     public void setIterable(Iterable values) {
         if (jsonNode != null && jsonNode.isArray()) {

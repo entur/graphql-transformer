@@ -130,6 +130,9 @@ public class GraphQLRequest extends JsonMessageSingle {
         return NullArgumentValue.INSTANCE;
     }
 
+    public ArgumentValue getVariableValue(Iterable<String> path) {
+        return getVariableValue(getVariables(), path);
+    }
 
     /**
      * Add selection field if not already included. Will also add any missing fields on path.
@@ -366,7 +369,7 @@ public class GraphQLRequest extends JsonMessageSingle {
             return getVariableValue(getVariables(), Arrays.asList(ref));
         }
 
-        return new GraphQLArgumentValue(current);
+        return new GraphQLArgumentValue(current, this);
     }
 
     private ObjectNode getVariables() {

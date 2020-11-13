@@ -16,6 +16,7 @@
 package no.entur.graphql.transformer.argument;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper around an argument value in a GraphQL request.
@@ -32,6 +33,8 @@ public interface ArgumentValue {
     String asString();
 
     List<ArgumentValue> asList();
+
+    Map<String, ArgumentValue> asMap();
 
     void setIterable(Iterable values);
 
