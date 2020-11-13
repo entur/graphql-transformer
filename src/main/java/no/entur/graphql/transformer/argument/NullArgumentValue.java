@@ -16,6 +16,7 @@
 package no.entur.graphql.transformer.argument;
 
 import java.util.List;
+import java.util.Map;
 
 public class NullArgumentValue implements ArgumentValue {
 
@@ -53,6 +54,9 @@ public class NullArgumentValue implements ArgumentValue {
     public List<ArgumentValue> asList() {
         return null;
     }
+
+    @Override
+    public Map<String, ArgumentValue> asMap() { return null; }
 
     @Override
     public void setIterable(Iterable values) {

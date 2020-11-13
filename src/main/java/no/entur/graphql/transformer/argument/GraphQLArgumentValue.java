@@ -21,13 +21,19 @@ import graphql.language.EnumValue;
 import graphql.language.FloatValue;
 import graphql.language.IntValue;
 import graphql.language.NullValue;
+import graphql.language.ObjectValue;
 import graphql.language.StringValue;
 import graphql.language.Value;
+import graphql.language.VariableReference;
+import no.entur.graphql.transformer.GraphQLRequest;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,11 +42,16 @@ import java.util.stream.Collectors;
 public class GraphQLArgumentValue implements ArgumentValue {
 
     private Value graphQLValue;
+    private GraphQLRequest graphQLRequest;
 
     public GraphQLArgumentValue(Value graphQLValue) {
         this.graphQLValue = graphQLValue;
     }
 
+    public GraphQLArgumentValue(Value graphQLValue, GraphQLRequest graphQLRequest) {
+        this.graphQLValue = graphQLValue;
+        this.graphQLRequest = graphQLRequest;
+    }
 
     @Override
     public Integer asInt() {
@@ -89,11 +100,27 @@ public class GraphQLArgumentValue implements ArgumentValue {
 
     public List<ArgumentValue> asList() {
         if (graphQLValue instanceof ArrayValue) {
-            return ((ArrayValue) graphQLValue).getValues().stream().map(v -> new GraphQLArgumentValue(v)).collect(Collectors.toList());
+            return ((ArrayValue) graphQLValue).getValues().stream().map(v -> new GraphQLArgumentValue(v, graphQLRequest)).collect(Collectors.toList());
         }
         return null;
     }
 
+    public Map<String, ArgumentValue> asMap() {
+        if (graphQLValue instanceof VariableReference) {
+            String reference = ((VariableReference) graphQLValue).getName();
+            return graphQLRequest.getVariableValue(Arrays.asList(reference)).asMap();
+        } else if (graphQLValue instanceof ObjectValue) {
+            return ((ObjectValue)graphQLValue).getObjectFields().stream().reduce(
+                    new HashMap<>(),
+                    (map, field) -> {
+                        map.put(field.getName(), new GraphQLArgumentValue(field.getValue(), graphQLRequest));
+                        return map;
+                    },
+                    (map, map2) -> map);
+        }
+
+        return null;
+    }
 
     public void setIterable(Iterable values) {
         if (graphQLValue instanceof ArrayValue) {
@@ -153,9 +180,9 @@ public class GraphQLArgumentValue implements ArgumentValue {
     @Override
     public GraphQLArgumentValue deepCopy() {
         if (graphQLValue == null) {
-            return new GraphQLArgumentValue(NullValue.Null);
+            return new GraphQLArgumentValue(NullValue.Null, graphQLRequest);
         }
-        return new GraphQLArgumentValue(graphQLValue.deepCopy());
+        return new GraphQLArgumentValue(graphQLValue.deepCopy(), graphQLRequest);
     }
 
     @Override

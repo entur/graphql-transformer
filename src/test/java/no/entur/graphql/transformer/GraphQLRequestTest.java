@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import graphql.language.IntValue;
 import graphql.language.StringValue;
+import no.entur.graphql.transformer.argument.ArgumentValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,7 @@ import java.io.FileReader;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class GraphQLRequestTest {
 
@@ -60,6 +62,24 @@ public class GraphQLRequestTest {
     @Test
     public void testGetArgumentValueForVariableMultilevelLevelArgument() throws Exception {
         Assert.assertEquals(1.0, req.getArgumentValue("trip", "to", "coordinates", "longitude").asDouble(), 0.1);
+    }
+
+    @Test
+    public void testGetArgumentValueForObjectVariableReference() throws Exception {
+        ArgumentValue submodes = req.getArgumentValue("trip", "transportSubmodes");
+        List<ArgumentValue> submodesList = submodes.asList();
+        Map<String, ArgumentValue> submodeMap = submodesList.get(0).asMap();
+        Assert.assertEquals("bus", submodeMap.get("transportMode").asString());
+        Assert.assertEquals("nightBus", submodeMap.get("transportSubmodes").asList().get(0).asString());
+    }
+
+    @Test
+    public void testGetArgumentValueForObject() throws Exception {
+        ArgumentValue submodes = req.getArgumentValue("trip", "transportSubmodes");
+        List<ArgumentValue> submodesList = submodes.asList();
+        Map<String, ArgumentValue> submodeMap = submodesList.get(1).asMap();
+        Assert.assertEquals("rail", submodeMap.get("transportMode").asString());
+        Assert.assertEquals("interregionalRail", submodeMap.get("transportSubmodes").asList().get(0).asString());
     }
 
     @Test
