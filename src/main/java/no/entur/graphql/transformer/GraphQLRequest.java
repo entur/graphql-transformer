@@ -382,6 +382,10 @@ public class GraphQLRequest extends JsonMessageSingle {
 
 
     ArgumentValue getVariableValue(JsonNode node, Iterable<String> path) {
+        if (node == null) {
+            return null;
+        }
+
         JsonNode current = node;
         JsonNode parent = null;
         String fieldName = null;
