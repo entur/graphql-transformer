@@ -179,4 +179,11 @@ public class GraphQLRequestTest {
         Assert.assertTrue("Variable should be present after replacement",
                 cleanedReqAsString.contains("\"startTime\":"));
     }
+
+    @Test
+    public void testGetArgumentForVariableWithoutVariablesIsNull() throws Exception {
+        String msg = CharStreams.toString(new FileReader("src/test/resources/no/entur/grapqhl/transformer/request_with_variable_references_without_variables.json"));
+        req = new GraphQLRequest(msg, objectMapper);
+        Assert.assertNull(req.getArgumentValue("trip", "from", "name"));
+    }
 }
