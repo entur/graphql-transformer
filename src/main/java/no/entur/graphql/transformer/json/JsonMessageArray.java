@@ -33,7 +33,7 @@ public class JsonMessageArray extends JsonMessage {
     public JsonMessageArray(String payload, ObjectMapper objectMapper) {
         super(objectMapper);
 
-        TypeReference<List<ObjectNode>> listType = new TypeReference<List<ObjectNode>>() {
+        TypeReference<List<JsonNode>> listType = new TypeReference<List<JsonNode>>() {
         };
         try {
             elements = getObjectMapper().readValue(payload, listType);
