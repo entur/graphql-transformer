@@ -2,10 +2,7 @@ version: 2.1
 executors:
   cci-toolbox:
     docker:
-      - image: eu.gcr.io/entur-system-1287/circleci-toolbox-image
-        auth:
-          username: _json_key
-          password: $DOCKER_PASSWORD
+      - image: google/cloud-sdk:alpine
     environment:
       DEBIAN_FRONTEND: "noninteractive"
       MAVEN_OPTS: -Xmx3G
@@ -58,10 +55,10 @@ workflows:
     jobs:
       - test:
           name: test-release
-          context: dev
+          context: global
       - build:
           name: build-release
-          context: dev
+          context: global
           filters:
             branches:
               only:
