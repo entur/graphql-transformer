@@ -21,7 +21,7 @@
 
     <groupId>no.entur</groupId>
     <artifactId>graphql-transformer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <name>graphql-transformer</name>
     <description>Util for manipulating GraphQL requests by setting or manipulating argument values and adding additional
@@ -267,8 +267,8 @@
                     <url>https://entur2.jfrog.io/entur2/libs-snapshot-local</url>
                 </snapshotRepository>
                 <repository>
-                    <id>ossrh</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <id>entur-releases</id>
+                    <url>https://entur2.jfrog.io/entur2/partner-release-local</url>
                 </repository>
             </distributionManagement>
         </profile>
