@@ -21,7 +21,7 @@
 
     <groupId>no.entur</groupId>
     <artifactId>graphql-transformer</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
 
     <name>graphql-transformer</name>
     <description>Util for manipulating GraphQL requests by setting or manipulating argument values and adding additional
